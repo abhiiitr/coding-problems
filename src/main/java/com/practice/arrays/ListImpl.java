@@ -1,15 +1,15 @@
 package com.practice.arrays;
 
-public class ListImpl implements IList<Integer> {
+public class ListImpl<T> implements IList<T> {
 
-	private int[] arr;
+	private Object[] arr;
 	private int currentIndex;
 	private int size;
 
 	public ListImpl() {
 		this.size = 16;
 		this.currentIndex = 0;
-		arr = new int[size];
+		arr = new Object[size];
 	}
 
 	public ListImpl(int size) {
@@ -18,14 +18,14 @@ public class ListImpl implements IList<Integer> {
 		}
 		this.size = size;
 		this.currentIndex = 0;
-		arr = new int[size];
+		arr = new Object[size];
 	}
 
 	@Override
-	public void add(Integer element) {
+	public void add(T element) {
 		if (currentIndex >= size) {
 			size = 2 * size;
-			int temp[] = new int[size];
+			Object temp[] = new Object[size];
 			for (int i = 0; i < currentIndex; i++) {
 				temp[i] = arr[i];
 			}
@@ -34,9 +34,24 @@ public class ListImpl implements IList<Integer> {
 		arr[currentIndex++] = element;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean remove(int index) {
-		return false;
+	public T remove(int index) {
+		if (index < 0)
+			throw new IllegalArgumentException("Index cannot be negative");
+		Object temp[] = new Object[size];
+		int j = 0;
+		Object removedElement = null;
+		for (int i = 0; i < currentIndex; i++) {
+			if (i == index - 1) {
+				removedElement = arr[i];
+				continue;
+			}
+			temp[j++] = arr[i];
+		}
+		arr = temp;
+		currentIndex--;
+		return (T) removedElement;
 	}
 
 	@Override
@@ -44,9 +59,22 @@ public class ListImpl implements IList<Integer> {
 		return currentIndex;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Integer get(int i) {
-		return arr[i];
+	public T get(int index) {
+		if (index >= currentIndex)
+			throw new ArrayIndexOutOfBoundsException(index);
+		return (T) arr[index];
+	}
+
+	@Override
+	public int capacity() {
+		return size;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return currentIndex == 0;
 	}
 
 }
